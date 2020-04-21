@@ -1,0 +1,15 @@
+version: "3"
+services:
+  db:
+    image: "postgres:12.2-alpine"
+    container_name: "my_postgres"
+    environment:
+      POSTGRES_DB: heroes
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: pass
+    ports:
+      - "54320:5432"
+    volumes:
+      - my_dbdata:/var/lib/postgresql/data
+volumes:
+  my_dbdata:

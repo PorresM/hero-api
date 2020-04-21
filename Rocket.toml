@@ -1,0 +1,14 @@
+[development]
+address = "localhost"
+port = 8000
+databases = { heroes = { url = "postgres://user:pass@localhost:54320/heroes" }}
+
+[staging]
+address = "localhost"
+port = 8000
+databases = { heroes = { url = "postgres://user:pass@localhost:54320/heroes" }}
+
+[production]
+address = "localhost"
+port = 8000
+databases = { heroes = { url = "postgres://user:pass@localhost:54320/heroes" }}
