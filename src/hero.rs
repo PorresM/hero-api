@@ -11,6 +11,7 @@ pub struct Hero {
     pub hometown: String,
     pub age: i32
 }
+// TODO: add created_at, updated_at
 
 #[derive(Deserialize, AsChangeset, Insertable)]
 #[table_name = "heroes"]
@@ -31,14 +32,23 @@ impl Hero {
         heroes::table.order(heroes::id.desc()).first(&connection.0).unwrap()
     }
 
-    pub fn read(connection: HeroesDb) -> Vec<Hero> {
-        heroes::table.order(heroes::id).load::<Hero>(&connection.0).unwrap()
+    pub fn read_all(connection: HeroesDb) -> Vec<Hero> {
+        heroes::table
+            .order(heroes::id)
+            .load::<Hero>(&connection.0)
+            .expect("Error loading heroes")
+    }
+
+    pub fn read(id: i32, connection: HeroesDb) -> Option<Hero> {
+        heroes::table.find(id)
+            .first(&connection.0)
+            .ok()
     }
 
     pub fn update(id: i32, hero: InsertableHero, connection: HeroesDb) -> bool {
         diesel::update(heroes::table.find(id))
             .set(&hero)
-            .execute(&connection.0)
+            .get_result::<Hero>(&connection.0)
             .is_ok()
     }
 

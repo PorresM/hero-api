@@ -6,9 +6,11 @@
 #[macro_use] extern crate serde_derive;
 
 use rocket_contrib::json::{Json, JsonValue};
+use rocket::http::Status;
 
 mod schema;
 mod hero;
+mod cors;
 use crate::hero::{Hero, InsertableHero};
 
 #[database("heroes")]
@@ -20,8 +22,17 @@ fn create(hero: Json<InsertableHero>, connection: HeroesDb) -> Json<Hero> {
 }
 
 #[get("/")]
-fn read(connection: HeroesDb) -> Json<JsonValue> {
-    Json(json!(Hero::read(connection)))
+fn read_all(connection: HeroesDb) -> Json<Vec<Hero>> {
+    Json(Hero::read_all(connection))
+}
+
+
+#[get("/<id>")]
+fn read(id: i32, connection: HeroesDb) -> Result<Json<Hero>, Status> {
+    match Hero::read(id, connection) {
+        Some(hero) => Ok(Json(hero)),
+        None => Err(Status::BadRequest)
+    }
 }
 
 #[put("/<id>", data = "<hero>")]
@@ -41,6 +52,7 @@ fn delete(id: i32, connection: HeroesDb) -> Json<JsonValue> {
 fn main() {
     rocket::ignite()
         .attach(HeroesDb::fairing())
-        .mount("/heroes", routes![create, read, update, delete])
+        .attach(cors::CorsFairing)
+        .mount("/heroes", routes![create, read, read_all, update, delete])
         .launch();
 }
