@@ -1,7 +1,8 @@
 use diesel;
 use diesel::prelude::*;
-use crate::schema::heroes;
+use crate::schema::hero;
 use crate::HeroesDb;
+use chrono::NaiveDateTime;
 
 #[derive(Serialize, Deserialize, Queryable)]
 pub struct Hero {
@@ -9,12 +10,13 @@ pub struct Hero {
     pub name: String,
     pub identity: String,
     pub hometown: String,
-    pub age: i32
+    pub age: i32,
+    pub created: NaiveDateTime,
+    pub updated: NaiveDateTime
 }
-// TODO: add created_at, updated_at
 
 #[derive(Deserialize, AsChangeset, Insertable)]
-#[table_name = "heroes"]
+#[table_name = "hero"]
 pub struct InsertableHero {
     pub name: String,
     pub identity: String,
@@ -24,34 +26,34 @@ pub struct InsertableHero {
 
 impl Hero {
     pub fn create(hero: InsertableHero, connection: HeroesDb) -> Option<Hero> {
-        diesel::insert_into(heroes::table)
+        diesel::insert_into(hero::table)
             .values(&hero)
             .get_result(&connection.0)
             .ok()
     }
 
     pub fn read_all(connection: HeroesDb) -> Vec<Hero> {
-        heroes::table
-            .order(heroes::id)
+        hero::table
+            .order(hero::id)
             .load::<Hero>(&connection.0)
             .expect("Error loading heroes")
     }
 
     pub fn read(id: i32, connection: HeroesDb) -> Option<Hero> {
-        heroes::table.find(id)
+        hero::table.find(id)
             .first(&connection.0)
             .ok()
     }
 
     pub fn update(id: i32, hero: InsertableHero, connection: HeroesDb) -> Option<Hero> {
-        diesel::update(heroes::table.find(id))
+        diesel::update(hero::table.find(id))
             .set(&hero)
             .get_result(&connection.0)
             .ok()
     }
 
     pub fn delete(id: i32, connection: HeroesDb) -> bool {
-        diesel::delete(heroes::table.find(id))
+        diesel::delete(hero::table.find(id))
             .execute(&connection.0)
             .is_ok()
     }
