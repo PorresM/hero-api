@@ -23,13 +23,11 @@ pub struct InsertableHero {
 }
 
 impl Hero {
-    pub fn create(hero: InsertableHero, connection: HeroesDb) -> Hero {
+    pub fn create(hero: InsertableHero, connection: HeroesDb) -> Option<Hero> {
         diesel::insert_into(heroes::table)
             .values(&hero)
-            .execute(&connection.0)
-            .expect("Error creating new hero");
-
-        heroes::table.order(heroes::id.desc()).first(&connection.0).unwrap()
+            .get_result(&connection.0)
+            .ok()
     }
 
     pub fn read_all(connection: HeroesDb) -> Vec<Hero> {
@@ -45,11 +43,11 @@ impl Hero {
             .ok()
     }
 
-    pub fn update(id: i32, hero: InsertableHero, connection: HeroesDb) -> bool {
+    pub fn update(id: i32, hero: InsertableHero, connection: HeroesDb) -> Option<Hero> {
         diesel::update(heroes::table.find(id))
             .set(&hero)
-            .get_result::<Hero>(&connection.0)
-            .is_ok()
+            .get_result(&connection.0)
+            .ok()
     }
 
     pub fn delete(id: i32, connection: HeroesDb) -> bool {
