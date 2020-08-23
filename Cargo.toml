@@ -17,7 +17,13 @@ diesel = { version = "1.4.4", features = ["chrono"] }
 # Powerful date and time functionality
 chrono = { version = "0.4.6", features = ["serde"] }
 
+# JWT
+jsonwebtoken = "7.2.0"
+
 # Serialization/Deserialization
 serde = "1.0"
 serde_json = "1.0"
 serde_derive = "1.0"
+
+# Commun
+regex = "1"

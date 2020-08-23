@@ -1,7 +1,7 @@
 use diesel;
 use diesel::prelude::*;
-use crate::schema::hero;
 use crate::HeroesDb;
+use crate::hero::schema::hero;
 use chrono::NaiveDateTime;
 
 #[derive(Serialize, Deserialize, Queryable)]
