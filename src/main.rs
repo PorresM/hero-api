@@ -7,6 +7,7 @@
 
 
 mod hero;
+mod user;
 mod cors;
 mod auth;
 mod jwt;
@@ -19,5 +20,6 @@ fn main() {
         .attach(HeroesDb::fairing())
         .attach(cors::CorsFairing);
     rocket = hero::mount(rocket);
+    rocket = user::mount(rocket);
     rocket.launch();
 }

@@ -12,7 +12,7 @@ rocket = "0.4.4"
 rocket_contrib = { version = "0.4.4", features = ["json", "diesel_postgres_pool"] }
 
 # Diesel ORM
-diesel = { version = "1.4.4", features = ["chrono"] }
+diesel = { version = "1.4.4", features = ["chrono", "postgres"] }
 
 # Powerful date and time functionality
 chrono = { version = "0.4.6", features = ["serde"] }

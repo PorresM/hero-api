@@ -12,6 +12,10 @@ enum ApiError {
 // Contains the username
 struct RoleUser(String);
 struct RoleAdmin { user: RoleUser }
+// TODO: voir pour simplement faire :
+// type User = ();
+// type Admin = ();
+// cf:  https://github.com/SergioBenitez/Rocket/blob/52320020bc26387b96a0126a0d49821ad3125e7d/site/guide/4-requests.md#guard-transparency
 
 // Tmp
 #[derive(Serialize, Deserialize)]
