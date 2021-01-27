@@ -10,6 +10,7 @@ mod hero;
 mod user;
 mod cors;
 mod auth;
+mod authh;
 mod jwt;
 
 #[database("heroes")]

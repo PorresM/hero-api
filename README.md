@@ -39,3 +39,8 @@ Cancel migrations :
 ```
 diesel migration revert
 ```
+
+## Todo
+
+- [ ] Improve this README
+- [ ] Run rust in a container

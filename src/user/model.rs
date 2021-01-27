@@ -3,6 +3,7 @@ use diesel::prelude::*;
 use crate::HeroesDb;
 use crate::user::schema::user;
 use chrono::NaiveDateTime;
+use bcrypt::{DEFAULT_COST, hash};
 
 #[derive(Serialize, Deserialize, Queryable)]
 pub struct User {
@@ -23,7 +24,11 @@ pub struct InsertableUser {
 }
 
 impl User {
-    pub fn create(user: InsertableUser, connection: HeroesDb) -> Option<User> {
+    pub fn create(mut user: InsertableUser, connection: HeroesDb) -> Option<User> {
+        user.password = match hash(user.password, DEFAULT_COST) {
+            Ok(hash) => hash,
+            Err(_) => return None // This error should be returned to the controller with a specific error handling
+        };
         diesel::insert_into(user::table)
             .values(&user)
             .get_result(&connection.0)
@@ -43,7 +48,17 @@ impl User {
             .ok()
     }
 
-    pub fn update(id: i32, user: InsertableUser, connection: HeroesDb) -> Option<User> {
+    pub fn find_by_username(username: String, connection: HeroesDb) -> Option<User> {
+        user::table.filter(user::username.eq(username))
+            .first(&connection.0)
+            .ok()
+    }
+
+    pub fn update(id: i32, mut user: InsertableUser, connection: HeroesDb) -> Option<User> {
+        user.password = match hash(user.password, DEFAULT_COST) {
+            Ok(hash) => hash,
+            Err(_) => return None // This error should be returned to the controller with a specific error handling
+        };
         diesel::update(user::table.find(id))
             .set(&user)
             .get_result(&connection.0)
